@@ -2,11 +2,11 @@ from contextlib import asynccontextmanager
 
 import uvicorn
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.responses import ORJSONResponse
 
 from api.v1 import users, subscriptions, posts
-
+from errors.base import BaseError
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -33,6 +33,14 @@ app.include_router(subscriptions.router,
 app.include_router(posts.router,
                    prefix='/api/v1/posts',
                    tags=['posts'])
+
+
+@app.exception_handler(BaseError)
+async def app_exception_handler(request: Request, exc: BaseError):
+    return ORJSONResponse(
+        status_code=exc.status_code,
+        content=exc.detail,
+    )
 
 
 if __name__ == '__main__':
