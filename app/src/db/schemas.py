@@ -3,7 +3,7 @@ import uuid
 from datetime import datetime
 from typing import Annotated, Optional
 
-from sqlalchemy import TIMESTAMP, ForeignKeyConstraint, UniqueConstraint
+from sqlalchemy import TIMESTAMP, ForeignKeyConstraint, UniqueConstraint, Index
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.sql import expression
 
@@ -69,5 +69,36 @@ class Subscription(Base):
         return {"id": self.id,
                 "user_id": self.user_id,
                 "subscriber_id": self.subscriber_id,
+                "creation_date": self.creation_date
+                }
+
+
+class Post(Base):
+    __tablename__ = 'posts'
+
+    id: Mapped[uuid_pk]
+    user_id: Mapped[uuid.UUID]
+    header: Mapped[str]
+    content: Mapped[Optional[str]]
+    creation_date: Mapped[timestamp]
+
+    __table_args__ = (
+        ForeignKeyConstraint(["user_id"], ["users.id"]),
+        Index("user_id_idx", "user_id")
+    )
+
+    def __init__(self, user_id: uuid.UUID, header: str, content: str = None):
+        self.user_id = user_id
+        self.header = header
+        self.content = content
+
+    def __str__(self) -> str:
+        return f'<{self.header}>'
+
+    def dict(self) -> dict:
+        return {"id": self.id,
+                "user_id": self.user_id,
+                "header": self.header,
+                "content": self.content,
                 "creation_date": self.creation_date
                 }

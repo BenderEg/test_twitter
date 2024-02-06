@@ -19,3 +19,8 @@ class SubscriptionAlreadyExist(BaseError):
 class SubscriptionNotFound(BaseError):
     status_code = HTTPStatus.NOT_FOUND
     detail = {"message": "Subscription not found"}
+
+
+class PostWrongUser(BaseError):
+    status_code = HTTPStatus.BAD_REQUEST
+    detail = {"message": "Unexisting user tried to create post"}
