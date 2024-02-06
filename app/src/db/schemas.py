@@ -1,7 +1,7 @@
 import uuid
 
 from datetime import datetime
-from typing import Annotated
+from typing import Annotated, Optional
 
 from sqlalchemy import TIMESTAMP
 from sqlalchemy.orm import Mapped, mapped_column
@@ -27,7 +27,7 @@ class User(Base):
     __tablename__ = 'users'
 
     id: Mapped[uuid_pk]
-    name: Mapped[str] = mapped_column(blank=True, nullable=True)
+    name: Mapped[Optional[str]]
     creation_date: Mapped[timestamp]
     modified: Mapped[timestamp_upd]
 
@@ -36,3 +36,9 @@ class User(Base):
 
     def __str__(self) -> str:
         return f'<User {self.id}>'
+
+    def dict(self) -> dict:
+        return {"id": self.id,
+                "name": self.name,
+                "creation_date": self.creation_date
+                }

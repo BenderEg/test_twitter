@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from core.config import settings
 
 
-Base = declarative_base(metadata=MetaData(schema="memo"))
+Base = declarative_base(metadata=MetaData(schema="content"))
 
 dsn = f'''postgresql+asyncpg://{
     settings.postgres.user}:{settings.postgres.password}@{
