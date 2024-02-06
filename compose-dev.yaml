@@ -1,0 +1,47 @@
+services:
+    twitter-db:
+        container_name: twitter
+        image: postgres:16
+        env_file:
+            - .env
+        ports:
+            - 5433:5432
+        volumes:
+            - twitter_postgres:/var/lib/postgresql/data
+            - ./db:/docker-entrypoint-initdb.d/
+        networks:
+            - twitter_net
+        environment:
+            POSTGRES_USER: ${POSTGRES__USER}
+            POSTGRES_DB: ${POSTGRES__DB}
+            POSTGRES_PASSWORD: ${POSTGRES__PASSWORD}
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U ${POSTGRES__USER} -d ${POSTGRES__DB}"]
+            interval: 5s
+            timeout: 5s
+            retries: 5
+
+    twitter-red:
+        container_name: twitter-red
+        image: redis
+        volumes:
+            - twitter-redis:/data
+        ports:
+            - 6379:6379
+        networks:
+            - twitter_net
+        healthcheck:
+            test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
+            interval: 1s
+            timeout: 3s
+            retries: 5
+
+volumes:
+    twitter_postgres:
+        name: twitter_postgres
+    twitter-redis:
+        name: twitter-redis
+
+networks:
+    twitter_net:
+        name: twitter_net
