@@ -102,3 +102,42 @@ class Post(Base):
                 "content": self.content,
                 "creation_date": self.creation_date
                 }
+
+
+class Feed(Base):
+    __tablename__ = 'feeds'
+
+    id: Mapped[uuid_pk]
+    user_id: Mapped[uuid.UUID]
+    author_id: Mapped[uuid.UUID]
+    header: Mapped[str]
+    content: Mapped[Optional[str]]
+    creation_date: Mapped[timestamp]
+    read: Mapped[bool] = mapped_column(default=False, nullable=False)
+
+    __table_args__ = (
+        ForeignKeyConstraint(["user_id"], ["users.id"]),
+        ForeignKeyConstraint(["author_id"], ["users.id"]),
+        Index("user_id_date_idx", "user_id", "creation_date"),
+    )
+
+    def __init__(self, user_id: uuid.UUID, author_id: uuid.UUID,
+                 header: str, creation_date: datetime, content: str = None):
+        self.user_id = user_id
+        self.author_id = author_id
+        self.header = header
+        self.content = content
+        self.creation_date = creation_date
+
+    def __str__(self) -> str:
+        return f'<{self.id}>'
+
+    def dict(self) -> dict:
+        return {"id": self.id,
+                "user_id": self.user_id,
+                "author_id": self.author_id,
+                "header": self.header,
+                "content": self.content,
+                "creation_date": self.creation_date,
+                "read": self.read
+                }

@@ -16,3 +16,4 @@ class PostOutModel(PostInModel):
 
     id: UUID
     creation_date: datetime
+    read: Optional[bool] = False
