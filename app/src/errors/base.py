@@ -6,11 +6,16 @@ class BaseError(Exception):
     detail: dict[str, Any]
 
 
-class SelfSubscriptionError(BaseError):
+class SelfSubscription(BaseError):
     status_code = HTTPStatus.FORBIDDEN
     detail = {"message": "Can not subscribe to yourself"}
 
 
-class SubscriptionAlreadyExistError(BaseError):
-    status_code = HTTPStatus.FORBIDDEN
+class SubscriptionAlreadyExist(BaseError):
+    status_code = HTTPStatus.BAD_REQUEST
     detail = {"message": "Subscription already exists"}
+
+
+class SubscriptionNotFound(BaseError):
+    status_code = HTTPStatus.NOT_FOUND
+    detail = {"message": "Subscription not found"}

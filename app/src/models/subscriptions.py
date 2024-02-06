@@ -3,7 +3,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, model_validator
 
-from errors.base import SelfSubscriptionError
+from errors.base import SelfSubscription
 
 
 class SubscriptionInModel(BaseModel):
@@ -14,7 +14,7 @@ class SubscriptionInModel(BaseModel):
     @model_validator(mode="after")
     def check_ids(self) -> 'SubscriptionInModel':
         if self.user_id == self.subscriber_id:
-            raise SelfSubscriptionError
+            raise SelfSubscription
         return self
 
 
