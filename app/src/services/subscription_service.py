@@ -26,6 +26,12 @@ class SubscriptionService:
         result = await self.subscription_repository.delete(subscription_id)
         return result
 
+    async def get_subscribers(self, user_id: UUID, limit: int, offset: int) -> list[Subscription]:
+        """Get user subscribers."""
+
+        result = await self.subscription_repository.get_list(user_id, limit, offset)
+        return result
+
 
 
 def get_subscription_service(

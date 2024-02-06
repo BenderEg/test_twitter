@@ -1,7 +1,7 @@
 from uuid import UUID
 
 from fastapi import Depends
-from sqlalchemy import delete
+from sqlalchemy import delete, select
 from sqlalchemy.exc import IntegrityError, NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -38,6 +38,9 @@ class SubscriptionRepository:
         await self.session.commit()
         return True
 
+    async def get_list(self, user_id: UUID, limit: int, offset: int):
+        result = await self.session.execute(select(Subscription).where(Subscription.user_id==user_id).limit(limit).offset(offset))
+        return result.scalars().all()
 
 def get_subscription_repository(session: AsyncSession = Depends(get_session)) -> SubscriptionRepository:
     return SubscriptionRepository(session=session)

@@ -15,3 +15,8 @@ class UserOutModel(BaseModel):
     id: UUID
     name: Optional[str] = None
     creation_date: datetime
+
+
+class UserShortModel(BaseModel):
+
+    id: UUID
