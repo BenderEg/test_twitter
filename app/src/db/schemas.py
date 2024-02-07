@@ -53,8 +53,8 @@ class Subscription(Base):
     creation_date: Mapped[timestamp]
 
     __table_args__ = (
-        ForeignKeyConstraint(["user_id"], ["users.id"]),
-        ForeignKeyConstraint(["subscriber_id"], ["users.id"]),
+        ForeignKeyConstraint(["user_id"], ["users.id"], ondelete='CASCADE'),
+        ForeignKeyConstraint(["subscriber_id"], ["users.id"], ondelete='CASCADE'),
         UniqueConstraint('user_id', 'subscriber_id', name='user_subscriber_idx'),
     )
 
@@ -83,7 +83,7 @@ class Post(Base):
     creation_date: Mapped[timestamp]
 
     __table_args__ = (
-        ForeignKeyConstraint(["user_id"], ["users.id"]),
+        ForeignKeyConstraint(["user_id"], ["users.id"], ondelete='CASCADE'),
         Index("user_id_idx", "user_id")
     )
 
@@ -117,8 +117,8 @@ class Feed(Base):
     read: Mapped[bool] = mapped_column(default=False, nullable=False)
 
     __table_args__ = (
-        ForeignKeyConstraint(["user_id"], ["users.id"]),
-        ForeignKeyConstraint(["author_id"], ["users.id"]),
+        ForeignKeyConstraint(["user_id"], ["users.id"], ondelete='CASCADE'),
+        ForeignKeyConstraint(["author_id"], ["users.id"], ondelete='CASCADE'),
         Index("user_id_date_idx", "user_id", "creation_date"),
     )
 

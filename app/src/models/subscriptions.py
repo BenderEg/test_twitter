@@ -22,3 +22,9 @@ class SubscriptionOutModel(SubscriptionInModel):
 
     id: UUID
     creation_date: datetime
+
+
+class SubscriptionShortModel(BaseModel):
+
+    id: UUID
+    user_id: UUID

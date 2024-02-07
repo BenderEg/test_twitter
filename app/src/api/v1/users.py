@@ -4,9 +4,10 @@ from uuid import UUID
 from fastapi import APIRouter, Depends
 
 from models.pagination import Pagination
-from models.read import ReadQuery
 from models.posts import FeedPostModel
-from models.users import UserInModel, UserOutModel, UserShortModel
+from models.read import ReadQuery
+from models.subscriptions import SubscriptionShortModel
+from models.users import UserInModel, UserOutModel
 from services.feed_service import FeedService, get_feed_service
 from services.subscription_service import SubscriptionService, get_subscription_service
 from services.user_service import UserService, get_user_service
@@ -23,13 +24,13 @@ async def create_user(user_in: UserInModel,
 
 
 @router.get("/{user_id}/subscriptions/", status_code=HTTPStatus.OK,
-            response_model=list[UserShortModel])
+            response_model=list[SubscriptionShortModel])
 async def get_user_subscribers(user_id: UUID,
                                pagination: Pagination = Depends(),
                                subscription_service: SubscriptionService = Depends(
-                                    get_subscription_service)) -> list[UserShortModel]:
+                                    get_subscription_service)) -> list[SubscriptionShortModel]:
     subscribers = await subscription_service.get_subscribers(user_id, pagination.limit, pagination.offset)
-    return [UserShortModel(**ele.dict()) for ele in subscribers]
+    return [SubscriptionShortModel(**ele.dict()) for ele in subscribers]
 
 
 @router.get("/{user_id}/posts/", status_code=HTTPStatus.OK,
