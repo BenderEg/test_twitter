@@ -1,7 +1,7 @@
 from uuid import UUID
 
 from fastapi import Depends
-from sqlalchemy import delete, select
+from sqlalchemy import delete, select, desc
 from sqlalchemy.exc import IntegrityError, NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -41,8 +41,11 @@ class PostRepository:
         return True
 
     async def get_list(self, user_id: UUID, limit: int, offset: int) -> list[Post]:
-        result = await self.session.execute(select(Post).where(Post.user_id==user_id).limit(limit).offset(offset))
+        result = await self.session.execute(select(Post).where(
+            Post.user_id==user_id).limit(limit).offset(offset).order_by(
+                desc(Post.creation_date)))
         return result.scalars().all()
+
 
 def get_post_repository(session: AsyncSession = Depends(get_session)) -> PostRepository:
     return PostRepository(session=session)

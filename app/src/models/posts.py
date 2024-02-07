@@ -20,6 +20,7 @@ class PostOutModel(PostInModel):
 
 class FeedPostModel(PostInModel):
 
+    id: UUID
     author_id: UUID
     post_id: UUID
     creation_date: datetime

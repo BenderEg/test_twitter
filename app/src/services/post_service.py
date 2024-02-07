@@ -17,14 +17,17 @@ class PostService:
     async def create(self, user_id: UUID, header: str, content: str | None) -> Post:
         """Create new post."""
 
-        result = await self.post_repository.create(user_id, header, content)
-        return result
+        return await self.post_repository.create(user_id, header, content)
 
     async def delete(self, post_id: UUID) -> bool:
         """Delete post."""
 
-        result = await self.post_repository.delete(post_id)
-        return result
+        return await self.post_repository.delete(post_id)
+
+    async def get_posts(self, user_id: UUID, limit: int, offset: int) -> list[Post]:
+        """Get users posts."""
+
+        return await self.post_repository.get_list(user_id, limit, offset)
 
 
 def get_post_service(

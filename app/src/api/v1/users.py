@@ -4,11 +4,12 @@ from uuid import UUID
 from fastapi import APIRouter, Depends
 
 from models.pagination import Pagination
-from models.posts import FeedPostModel
-from models.read import ReadQuery
+from models.posts import FeedPostModel, PostOutModel
+from models.read import ReadQuery, ReadFilterQuery
 from models.subscriptions import SubscriptionShortModel
 from models.users import UserInModel, UserOutModel
 from services.feed_service import FeedService, get_feed_service
+from services.post_service import PostService, get_post_service
 from services.subscription_service import SubscriptionService, get_subscription_service
 from services.user_service import UserService, get_user_service
 
@@ -33,15 +34,25 @@ async def get_user_subscribers(user_id: UUID,
     return [SubscriptionShortModel(**ele.dict()) for ele in subscribers]
 
 
-@router.get("/{user_id}/posts/", status_code=HTTPStatus.OK,
+@router.get("/{user_id}/feed/", status_code=HTTPStatus.OK,
             response_model=list[FeedPostModel])
 async def get_user_feed(user_id: UUID,
                         pagination: Pagination = Depends(),
+                        status: ReadFilterQuery = Depends(),
                         feed_service: FeedService = Depends(
                             get_feed_service)) -> list[FeedPostModel]:
-    posts = await feed_service.get_feed(user_id, pagination.limit, pagination.offset)
+    posts = await feed_service.get_feed(user_id, pagination.limit, pagination.offset, status.read)
     return [FeedPostModel(**ele.dict()) for ele in posts]
 
+
+@router.get("/{user_id}/posts/", status_code=HTTPStatus.OK,
+            response_model=list[PostOutModel])
+async def get_user_posts(user_id: UUID,
+                         pagination: Pagination = Depends(),
+                         post_service: PostService = Depends(
+                            get_post_service)) -> list[PostOutModel]:
+    posts = await post_service.get_posts(user_id, pagination.limit, pagination.offset)
+    return [PostOutModel(**ele.dict()) for ele in posts]
 
 @router.patch("/posts/{feed_id}/", status_code=HTTPStatus.OK,
               response_model=FeedPostModel)

@@ -24,10 +24,10 @@ class FeedService:
 
         await self.feed_repository.add(author_id, post_id, header, creation_date, content)
 
-    async def get_feed(self, user_id: UUID, limit: int, offset: int) -> list[Feed]:
+    async def get_feed(self, user_id: UUID, limit: int, offset: int, status: bool | None) -> list[Feed]:
         """Get user feed."""
 
-        return await self.feed_repository.get_list(user_id, limit, offset)
+        return await self.feed_repository.get_list(user_id, limit, offset, status)
 
     async def delete_posts(self, author_id: UUID, post_id: UUID) -> None:
         """Delete posts from feed for all authors subscribers."""

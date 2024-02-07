@@ -2,7 +2,7 @@ from datetime import datetime
 from uuid import UUID
 
 from fastapi import Depends
-from sqlalchemy import insert, select, delete, and_, update
+from sqlalchemy import insert, select, delete, and_, update, desc
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from db.sqlalcem import get_session
@@ -36,8 +36,11 @@ class FeedRepository:
                                 )
         await self.session.commit()
 
-    async def get_list(self, user_id: UUID, limit: int, offset: int) -> list[Feed]:
-        result = await self.session.execute(select(Feed).where(Feed.user_id==user_id).limit(limit).offset(offset))
+    async def get_list(self, user_id: UUID, limit: int, offset: int, status: bool | None = None) -> list[Feed]:
+        stmt = select(Feed).where(Feed.user_id==user_id)
+        if status is not None:
+            stmt = stmt.where(Feed.read==status)
+        result = await self.session.execute(stmt.limit(limit).offset(offset).order_by(desc(Feed.creation_date)))
         return result.scalars().all()
 
     async def delete(self, author_id: UUID, post_id: UUID) -> None:
