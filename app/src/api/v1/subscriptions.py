@@ -11,8 +11,12 @@ from services.subscription_service import SubscriptionService, get_subscription_
 router = APIRouter()
 
 
-@router.post("/", status_code=HTTPStatus.CREATED,
-                  response_model=SubscriptionOutModel)
+@router.post("/",
+             status_code=HTTPStatus.CREATED,
+             description="Создание подписки на блог пользователя",
+             summary="Создать подписку на блог пользователя",
+             response_model=SubscriptionOutModel
+             )
 async def add_subscription(subscription_in: SubscriptionInModel,
                            background_tasks: BackgroundTasks,
                            subscription_service: SubscriptionService = Depends(
@@ -28,8 +32,12 @@ async def add_subscription(subscription_in: SubscriptionInModel,
     return SubscriptionOutModel(**subscription.dict())
 
 
-@router.delete("/{subscription_id}/", status_code=HTTPStatus.OK,
-                  response_class=Response)
+@router.delete("/{subscription_id}/",
+               status_code=HTTPStatus.OK,
+               description="Удаление подписки на блог пользователя",
+               summary="Удалить подписку на блог пользователя",
+               response_class=Response
+               )
 async def delete_subscription(subscription_id: UUID,
                               background_tasks: BackgroundTasks,
                               subscription_service: SubscriptionService = Depends(

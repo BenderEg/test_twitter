@@ -24,15 +24,9 @@ app = FastAPI(
 )
 
 
-app.include_router(users.router,
-                   prefix='/api/v1/users',
-                   tags=['users'])
-app.include_router(subscriptions.router,
-                   prefix='/api/v1/subscriptions',
-                   tags=['subscriptions'])
-app.include_router(posts.router,
-                   prefix='/api/v1/posts',
-                   tags=['posts'])
+app.include_router(users.router, prefix="/api/v1/users", tags=["Пользователи"])
+app.include_router(subscriptions.router, prefix="/api/v1/subscriptions", tags=["Подписки"])
+app.include_router(posts.router, prefix="/api/v1/posts", tags=["Посты"])
 
 
 @app.exception_handler(BaseError)
@@ -43,10 +37,10 @@ async def app_exception_handler(request: Request, exc: BaseError):
     )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     uvicorn.run(
-        'main:app',
-        host='127.0.0.1',
+        "main:app",
+        host="127.0.0.1",
         port=8000,
         reload=True
     )

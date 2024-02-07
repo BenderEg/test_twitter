@@ -6,7 +6,7 @@ from sqlalchemy import insert, select, delete, and_, update, desc
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from db.sqlalcem import get_session
-from db.schemas import Post, Feed
+from db.schemas import Feed
 from external.posts_repository import PostRepository
 from external.subscriptions_repository import SubscriptionRepository
 

@@ -10,8 +10,12 @@ from services.post_service import PostService, get_post_service
 router = APIRouter()
 
 
-@router.post("/", status_code=HTTPStatus.CREATED,
-             response_model=PostOutModel)
+@router.post("/",
+             status_code=HTTPStatus.CREATED,
+             description="Создание нового поста",
+             summary="Создать новый пост",
+             response_model=PostOutModel
+             )
 async def create_post(post_in: PostInModel,
                       background_tasks: BackgroundTasks,
                       post_service: PostService = Depends(get_post_service),
@@ -23,8 +27,12 @@ async def create_post(post_in: PostInModel,
     return PostOutModel(**post.dict())
 
 
-@router.delete("/", status_code=HTTPStatus.OK,
-                response_class=Response)
+@router.delete("/",
+               status_code=HTTPStatus.OK,
+               description="Удаление поста",
+               summary="Удалить пост",
+               response_class=Response
+               )
 async def delete_post(deleted_post: DeletedPostModel,
                       background_tasks: BackgroundTasks,
                       post_service: PostService = Depends(get_post_service),
