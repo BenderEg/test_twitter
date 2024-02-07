@@ -27,8 +27,7 @@ class FeedService:
     async def get_feed(self, user_id: UUID, limit: int, offset: int) -> list[Feed]:
         """Get user feed."""
 
-        result = await self.feed_repository.get_list(user_id, limit, offset)
-        return result
+        return await self.feed_repository.get_list(user_id, limit, offset)
 
     async def delete_posts(self, author_id: UUID, post_id: UUID) -> None:
         """Delete posts from feed for all authors subscribers."""
@@ -44,6 +43,11 @@ class FeedService:
         """Delete all authors posts from subscribers feed."""
 
         await self.feed_repository.delete_feeds_by_author_id(author_id, subscriber_id)
+
+    async def change_ridden_status(self, feed_id: UUID, status: bool) -> Feed:
+        """Mark post for user depending on ridden status."""
+
+        return await self.feed_repository.change_ridden_status(feed_id, status)
 
 
 def get_feed_service(

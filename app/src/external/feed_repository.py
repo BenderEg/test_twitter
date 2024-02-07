@@ -2,7 +2,7 @@ from datetime import datetime
 from uuid import UUID
 
 from fastapi import Depends
-from sqlalchemy import insert, select, delete, and_
+from sqlalchemy import insert, select, delete, and_, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from db.sqlalcem import get_session
@@ -65,6 +65,13 @@ class FeedRepository:
                                                       Feed.author_id==author_id))
                                                       )
         await self.session.commit()
+
+    async def change_ridden_status(self, feed_id: UUID, status: bool) -> Feed:
+        result = await self.session.execute(update(Feed).where(Feed.id==feed_id).values({"read": status}).returning(Feed))
+        feed = result.scalar_one()
+        await self.session.commit()
+        return feed
+
 
 def get_feed_repository(session: AsyncSession = Depends(get_session)) -> FeedRepository:
     return FeedRepository(session=session)

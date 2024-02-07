@@ -4,6 +4,7 @@ from uuid import UUID
 from fastapi import APIRouter, Depends
 
 from models.pagination import Pagination
+from models.read import ReadQuery
 from models.posts import FeedPostModel
 from models.users import UserInModel, UserOutModel, UserShortModel
 from services.feed_service import FeedService, get_feed_service
@@ -39,3 +40,13 @@ async def get_user_feed(user_id: UUID,
                             get_feed_service)) -> list[FeedPostModel]:
     posts = await feed_service.get_feed(user_id, pagination.limit, pagination.offset)
     return [FeedPostModel(**ele.dict()) for ele in posts]
+
+
+@router.patch("/posts/{feed_id}/", status_code=HTTPStatus.OK,
+              response_model=FeedPostModel)
+async def edit_feed(feed_id: UUID,
+                    status: ReadQuery = Depends(),
+                    feed_service: FeedService = Depends(
+                        get_feed_service)) -> FeedPostModel:
+    post = await feed_service.change_ridden_status(feed_id, status.read)
+    return FeedPostModel(**post.dict())
