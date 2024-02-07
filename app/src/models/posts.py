@@ -16,4 +16,17 @@ class PostOutModel(PostInModel):
 
     id: UUID
     creation_date: datetime
+
+
+class FeedPostModel(PostInModel):
+
+    author_id: UUID
+    post_id: UUID
+    creation_date: datetime
     read: Optional[bool] = False
+
+
+class DeletedPostModel(BaseModel):
+
+    user_id: UUID
+    post_id: UUID

@@ -27,16 +27,16 @@ class SubscriptionRepository:
         except IntegrityError:
             raise SubscriptionAlreadyExist
 
-    async def delete(self, subscription_id: UUID) -> bool:
+    async def delete(self, subscription_id: UUID) -> Subscription:
         result = await self.session.execute(
-            delete(Subscription).where(Subscription.id == subscription_id).returning(Subscription.id),
+            delete(Subscription).where(Subscription.id == subscription_id).returning(Subscription),
         )
         try:
-            _ = result.scalar_one()
+            deleted_subscription = result.scalar_one()
+            await self.session.commit()
+            return deleted_subscription
         except NoResultFound:
             raise SubscriptionNotFound
-        await self.session.commit()
-        return True
 
     async def get_list(self, user_id: UUID, limit: int, offset: int):
         result = await self.session.execute(select(Subscription).where(Subscription.user_id==user_id).limit(limit).offset(offset))

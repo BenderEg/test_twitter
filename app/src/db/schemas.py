@@ -110,6 +110,7 @@ class Feed(Base):
     id: Mapped[uuid_pk]
     user_id: Mapped[uuid.UUID]
     author_id: Mapped[uuid.UUID]
+    post_id: Mapped[uuid.UUID]
     header: Mapped[str]
     content: Mapped[Optional[str]]
     creation_date: Mapped[timestamp]
@@ -121,10 +122,11 @@ class Feed(Base):
         Index("user_id_date_idx", "user_id", "creation_date"),
     )
 
-    def __init__(self, user_id: uuid.UUID, author_id: uuid.UUID,
+    def __init__(self, user_id: uuid.UUID, author_id: uuid.UUID, post_id: uuid.UUID,
                  header: str, creation_date: datetime, content: str = None):
         self.user_id = user_id
         self.author_id = author_id
+        self.post_id = post_id
         self.header = header
         self.content = content
         self.creation_date = creation_date
@@ -136,6 +138,7 @@ class Feed(Base):
         return {"id": self.id,
                 "user_id": self.user_id,
                 "author_id": self.author_id,
+                "post_id": self.post_id,
                 "header": self.header,
                 "content": self.content,
                 "creation_date": self.creation_date,

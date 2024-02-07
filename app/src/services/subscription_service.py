@@ -20,7 +20,7 @@ class SubscriptionService:
         result = await self.subscription_repository.create(user_id, subscriber_id)
         return result
 
-    async def delete(self, subscription_id: UUID) -> bool:
+    async def delete(self, subscription_id: UUID) -> Subscription:
         """Delete subscription."""
 
         result = await self.subscription_repository.delete(subscription_id)

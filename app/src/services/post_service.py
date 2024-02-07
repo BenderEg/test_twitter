@@ -20,6 +20,12 @@ class PostService:
         result = await self.post_repository.create(user_id, header, content)
         return result
 
+    async def delete(self, post_id: UUID) -> bool:
+        """Delete post."""
+
+        result = await self.post_repository.delete(post_id)
+        return result
+
 
 def get_post_service(
     post_repository: PostRepository = Depends(get_post_repository),

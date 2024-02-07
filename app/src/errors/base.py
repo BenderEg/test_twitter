@@ -24,3 +24,8 @@ class SubscriptionNotFound(BaseError):
 class PostWrongUser(BaseError):
     status_code = HTTPStatus.BAD_REQUEST
     detail = {"message": "Unexisting user tried to create post"}
+
+
+class PostNotFound(BaseError):
+    status_code = HTTPStatus.NOT_FOUND
+    detail = {"message": "Post not found"}
