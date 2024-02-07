@@ -30,5 +30,7 @@ class Settings(BaseSettings):
     postgres: PostgresSettings
     echo: bool = True
     log_level: str
+    twit_numbers: int
+    max_twits: int
 
 settings = Settings()

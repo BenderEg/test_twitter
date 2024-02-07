@@ -1,15 +1,16 @@
 from datetime import datetime
+from typing import Iterable
 from uuid import UUID
 
 from fastapi import Depends
-from sqlalchemy import insert, select, delete, and_, update, desc
+from sqlalchemy import insert, select, delete, and_, update, desc, text, bindparam
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from db.sqlalcem import get_session
 from db.schemas import Feed
 from external.posts_repository import PostRepository
 from external.subscriptions_repository import SubscriptionRepository
-
+from external.user_repository import UserRepository
 
 class FeedRepository:
     def __init__(self, session: AsyncSession) -> None:
@@ -75,6 +76,42 @@ class FeedRepository:
         await self.session.commit()
         return feed
 
+    async def get_feeds(self, users_id: UUID, twit_numbers: int):
+        query = text(f'''WITH tab1 AS (
+                SELECT
+                    *,
+                    ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY creation_date DESC) AS row_num
+                FROM feeds
+                WHERE user_id IN :users
+            )
+            SELECT tab1.user_id,  ARRAY_AGG((tab1.author_id,
+                                            tab1.header,
+                                            tab1.content,
+                                            tab1.creation_date)) AS row_values
+            FROM tab1
+            WHERE row_num <= :twit_number
+            group by tab1.user_id''')
+        query = query.bindparams(bindparam("users", expanding=True),
+                                 bindparam("twit_number"),
+                                 users=users_id,
+                                 twit_number=twit_numbers)
+        result = await self.session.execute(query)
+        return result.fetchall()
+
+    async def clean_feeds_table(self, max_twits: int):
+        stmt = text(f'''DELETE FROM feeds
+WHERE id IN (
+    SELECT id
+    FROM (
+        SELECT id,
+            ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY creation_date DESC) AS row_num
+        FROM feeds
+    ) AS subquery
+    WHERE subquery.row_num > :max_twits)''')
+        stmt = stmt.bindparams(bindparam("max_twits"),
+                               max_twits=max_twits)
+        await self.session.execute(stmt)
+        await self.session.commit()
 
 def get_feed_repository(session: AsyncSession = Depends(get_session)) -> FeedRepository:
     return FeedRepository(session=session)

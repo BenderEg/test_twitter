@@ -4,14 +4,26 @@ import uvicorn
 
 from fastapi import FastAPI, Request
 from fastapi.responses import ORJSONResponse
+from redis.asyncio import Redis
 
 from api.v1 import users, subscriptions, posts
+from background.regular import scheduler
+from core.config import settings
+from db import red_conn
 from errors.base import BaseError
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-
+    red_conn.redis = Redis(host=settings.redis.host,
+                           port=settings.redis.port,
+                           db=settings.redis.db,
+                           encoding="utf-8",
+                           decode_responses=True
+                           )
+    scheduler.start()
     yield
+    scheduler.shutdown()
+    await red_conn.redis.close()
 
 
 app = FastAPI(
