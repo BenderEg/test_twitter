@@ -17,6 +17,7 @@ class PostgresSettings(BaseSettings):
     port: int
     schema: str
 
+
 class Settings(BaseSettings):
 
     model_config = SettingsConfigDict(
@@ -30,5 +31,8 @@ class Settings(BaseSettings):
     postgres: PostgresSettings
     echo: bool = True
     log_level: str
+
+
+
 
 settings = Settings()

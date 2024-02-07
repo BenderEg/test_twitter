@@ -36,12 +36,39 @@ services:
             timeout: 3s
             retries: 5
 
+    twitter-celery:
+        container_name: twitter-celery
+        build:
+            context: app
+        env_file:
+            - .env
+        depends_on:
+            twitter-db:
+                condition: service_healthy
+            twitter-red:
+                condition: service_healthy
+        volumes:
+            - twitter-celery:/data
+        networks:
+            - twitter_net
+        entrypoint: ["bash", "start_celery.sh"]
+        configs:
+            - source: celery_config
+              target: /app/config/celery_config
+        restart: always
+
 volumes:
     twitter_postgres:
         name: twitter_postgres
     twitter-redis:
         name: twitter-redis
+    twitter-celery:
+        name: twitter-celery
 
 networks:
     twitter_net:
         name: twitter_net
+
+configs:
+    celery_config:
+        file: ./celery/config

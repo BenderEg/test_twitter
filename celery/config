@@ -1,0 +1,4 @@
+BROKER_TRANSPORT_OPTIONS={"visibility_timeout": 3600}
+ACCEPT_CONTENT=["application/json"]
+TASK_SERIALIZER="json"
+IMPORTS=["background.tasks"]

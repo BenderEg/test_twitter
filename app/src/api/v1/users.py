@@ -31,6 +31,8 @@ async def get_user_subscribers(user_id: UUID,
     return [UserShortModel(**ele.dict()) for ele in subscribers]
 
 
+# TO DO: добавить сортировку по дате
+
 @router.get("/{user_id}/posts/", status_code=HTTPStatus.OK,
             response_model=list[PostOutModel])
 async def get_user_feed(user_id: UUID,
