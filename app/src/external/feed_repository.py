@@ -69,8 +69,11 @@ class FeedRepository:
                                                       )
         await self.session.commit()
 
-    async def change_ridden_status(self, feed_id: UUID, status: bool) -> Feed:
-        result = await self.session.execute(update(Feed).where(Feed.id==feed_id).values({"read": status}).returning(Feed))
+    async def change_ridden_status(self, feed_id: UUID, user_id: UUID, status: bool) -> Feed:
+        result = await self.session.execute(
+            update(Feed).where(and_(Feed.user_id==user_id,
+                                    Feed.id==feed_id)).values(
+                {"read": status}).returning(Feed))
         feed = result.scalar_one()
         await self.session.commit()
         return feed

@@ -44,10 +44,10 @@ class FeedService:
 
         await self.feed_repository.delete_feeds_by_author_id(author_id, subscriber_id)
 
-    async def change_ridden_status(self, feed_id: UUID, status: bool) -> Feed:
+    async def change_ridden_status(self, feed_id: UUID, user_id: UUID, status: bool) -> Feed:
         """Mark post for user depending on ridden status."""
 
-        return await self.feed_repository.change_ridden_status(feed_id, status)
+        return await self.feed_repository.change_ridden_status(feed_id, user_id, status)
 
 
 def get_feed_service(

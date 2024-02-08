@@ -71,15 +71,16 @@ async def get_user_posts(user_id: UUID,
     return [PostOutModel(**ele.dict()) for ele in posts]
 
 
-@router.patch("/posts/{feed_id}/",
+@router.patch("/{user_id}/feed/{feed_id}/",
               status_code=HTTPStatus.OK,
               description="Пометка поста прочитанным",
               summary="Пометить пост прочитанным",
               response_model=FeedPostModel
               )
 async def edit_feed(feed_id: UUID,
+                    user_id: UUID,
                     status: ReadQuery = Depends(),
                     feed_service: FeedService = Depends(
                         get_feed_service)) -> FeedPostModel:
-    post = await feed_service.change_ridden_status(feed_id, status.read)
+    post = await feed_service.change_ridden_status(feed_id, user_id, status.read)
     return FeedPostModel(**post.dict())
