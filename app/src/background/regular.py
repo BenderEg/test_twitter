@@ -46,5 +46,5 @@ async def clean_feed_table():
         await feed_repo.clean_feeds_table(settings.max_twits)
         logging.info(f"Finish feed table cleaning")
 
-scheduler.add_job(clean_feed_table, "interval", seconds=5)
-scheduler.add_job(send_twits_to_users, "interval", seconds=5)
+scheduler.add_job(clean_feed_table, "cron", hour=22, minute=0)
+scheduler.add_job(send_twits_to_users, "cron", hour=12, minute=0)

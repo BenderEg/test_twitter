@@ -21,10 +21,10 @@ async def lifespan(app: FastAPI):
                            encoding="utf-8",
                            decode_responses=True
                            )
-    #scheduler.start()
+    scheduler.start()
     await create_partioning_tables(settings.feed_partitions, "feeds")
     yield
-    #scheduler.shutdown()
+    scheduler.shutdown()
     await red_conn.redis.close()
 
 
