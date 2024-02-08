@@ -6,7 +6,7 @@ REDIS__DB=0
 # postgres connection data localhost
 
 POSTGRES__SCHEMA=content
-POSTGRES__PASSWORD=
+POSTGRES__PASSWORD=password
 POSTGRES__USER=admin
 POSTGRES__DB=twitter
 POSTGRES__HOST=twitter-db
