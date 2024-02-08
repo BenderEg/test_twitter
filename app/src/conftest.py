@@ -4,8 +4,11 @@ import pytest_asyncio
 
 from aiohttp import ClientSession
 
+from db.sqlalcem import async_session
+from tests.utils import delete_user
 
-@pytest_asyncio.fixture
+
+@pytest_asyncio.fixture(scope="module")
 def make_get_request() -> tuple[dict, int]:
     async def inner(
         sub_url: str,
@@ -19,11 +22,13 @@ def make_get_request() -> tuple[dict, int]:
                                         cookies=cookies,
                                         params=query
                                         ) as response:
-                return response.json(), response.status_code
+                body = await response.json()
+                status = response.status
+                return body, status
     return inner
 
 
-@pytest_asyncio.fixture
+@pytest_asyncio.fixture(scope="module")
 def make_post_request():
     async def inner(
         sub_url: str,
@@ -43,8 +48,46 @@ def make_post_request():
     return inner
 
 
-@pytest_asyncio.fixture
+@pytest_asyncio.fixture(scope="module")
 async def get_created_user_id(make_post_request) -> UUID:
     body, _  = await make_post_request("/api/v1/users/",
                                         data={})
-    return body.get("id")
+    user_id = body.get("id")
+    yield user_id
+    async with async_session() as session:
+        await delete_user(user_id, session)
+
+
+@pytest_asyncio.fixture(scope="module")
+async def get_created_user_pair(make_post_request) -> UUID:
+    body, _  = await make_post_request("/api/v1/users/",
+                                        data={})
+    user_id = body.get("id")
+    body, _  = await make_post_request("/api/v1/users/",
+                                        data={})
+    subscriber_id = body.get("id")
+    yield user_id, subscriber_id
+    async with async_session() as session:
+        await delete_user(user_id, session)
+        await delete_user(subscriber_id, session)
+
+
+@pytest_asyncio.fixture(scope="module")
+async def get_created_user_pair_with_post(make_post_request) -> UUID:
+    body, _  = await make_post_request("/api/v1/users/",
+                                        data={})
+    user_id = body.get("id")
+    _, _  = await make_post_request("/api/v1/posts/",
+                                        data={"user_id": user_id,
+                                              "header": "some header"})
+    body, _  = await make_post_request("/api/v1/users/",
+                                        data={})
+    subscriber_id = body.get("id")
+    await make_post_request("/api/v1/subscriptions/",
+                            data={"user_id": str(user_id),
+                                    "subscriber_id": str(subscriber_id)}
+                            )
+    yield user_id, subscriber_id
+    async with async_session() as session:
+        await delete_user(user_id, session)
+        await delete_user(subscriber_id, session)
