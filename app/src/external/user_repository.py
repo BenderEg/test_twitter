@@ -22,13 +22,14 @@ class UserRepository:
         await self.session.refresh(user)
         return user
 
-    async def get_users_id_in_partitions(self, last_processed: UUID | None = None) -> Iterable:
+    async def get_users_id_in_partitions(self, last_processed: UUID | None = None,
+                                         partitions_number: int = 1000) -> Iterable:
         query = select(User.id)
         if last_processed:
             query = query.where(User.id > last_processed)
         query = query.order_by(User.id)
         result = await self.session.execute(query)
-        users_id = result.scalars().partitions(100)
+        users_id = result.scalars().partitions(partitions_number)
         return users_id
 
 
