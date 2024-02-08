@@ -108,7 +108,7 @@ class Feed(Base):
     __tablename__ = 'feeds'
 
     id: Mapped[uuid_pk]
-    user_id: Mapped[uuid.UUID]
+    user_id: Mapped[uuid.UUID] = mapped_column(primary_key=True)
     author_id: Mapped[uuid.UUID]
     post_id: Mapped[uuid.UUID]
     header: Mapped[str]
@@ -119,7 +119,11 @@ class Feed(Base):
     __table_args__ = (
         ForeignKeyConstraint(["user_id"], ["users.id"], ondelete='CASCADE'),
         ForeignKeyConstraint(["author_id"], ["users.id"], ondelete='CASCADE'),
+        ForeignKeyConstraint(["post_id"], ["posts.id"], ondelete='CASCADE'),
         Index("user_id_date_idx", "user_id", "creation_date"),
+        {
+        'postgresql_partition_by': 'HASH (user_id)'
+    }
     )
 
     def __init__(self, user_id: uuid.UUID, author_id: uuid.UUID, post_id: uuid.UUID,
