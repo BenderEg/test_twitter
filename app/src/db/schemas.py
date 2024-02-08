@@ -3,7 +3,8 @@ import uuid
 from datetime import datetime
 from typing import Annotated, Optional
 
-from sqlalchemy import TIMESTAMP, ForeignKeyConstraint, UniqueConstraint, Index
+from sqlalchemy import TIMESTAMP, ForeignKeyConstraint, \
+    UniqueConstraint, Index, PrimaryKeyConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.sql import expression
 
@@ -117,10 +118,11 @@ class Feed(Base):
     read: Mapped[bool] = mapped_column(default=False, nullable=False)
 
     __table_args__ = (
+        PrimaryKeyConstraint("user_id", "id"),
         ForeignKeyConstraint(["user_id"], ["users.id"], ondelete='CASCADE'),
         ForeignKeyConstraint(["author_id"], ["users.id"], ondelete='CASCADE'),
         ForeignKeyConstraint(["post_id"], ["posts.id"], ondelete='CASCADE'),
-        Index("user_id_date_idx", "user_id", "creation_date"),
+        Index("creation_date_idx", "creation_date"),
         {
         'postgresql_partition_by': 'HASH (user_id)'
     }
