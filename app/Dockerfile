@@ -11,5 +11,3 @@ COPY ./src .
 RUN useradd -d /app -r -U sam && chown sam:sam -R /app
 
 USER sam
-
-ENTRYPOINT ["bash", "entrypoint.sh"]
