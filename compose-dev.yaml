@@ -9,6 +9,7 @@ services:
         volumes:
             - twitter_postgres:/var/lib/postgresql/data
             - ./db:/docker-entrypoint-initdb.d/
+            - ./dump:/dump/
         networks:
             - twitter_net
         environment:
