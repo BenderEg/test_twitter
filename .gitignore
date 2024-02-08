@@ -164,5 +164,3 @@ cython_debug/
 .ruff_cache/
 
 .DS_Store
-
-test_data.dump
