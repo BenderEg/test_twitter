@@ -7,7 +7,7 @@ services:
         env_file:
             - .env
         volumes:
-            #- twitter_postgres:/var/lib/postgresql/data
+            - twitter_postgres:/var/lib/postgresql/data
             - ./db:/docker-entrypoint-initdb.d/
             - ./dump:/dump/
         networks:
