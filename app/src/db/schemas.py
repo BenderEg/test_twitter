@@ -123,9 +123,6 @@ class Feed(Base):
         ForeignKeyConstraint(["author_id"], ["users.id"], ondelete='CASCADE'),
         ForeignKeyConstraint(["post_id"], ["posts.id"], ondelete='CASCADE'),
         Index("creation_date_idx", "creation_date"),
-        {
-        'postgresql_partition_by': 'HASH (user_id)'
-    }
     )
 
     def __init__(self, user_id: uuid.UUID, author_id: uuid.UUID, post_id: uuid.UUID,

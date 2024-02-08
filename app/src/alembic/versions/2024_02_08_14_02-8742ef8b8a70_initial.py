@@ -65,7 +65,6 @@ def upgrade() -> None:
     sa.ForeignKeyConstraint(['user_id'], ['content.users.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('user_id', 'id'),
     schema='content',
-    postgresql_partition_by='HASH (user_id)'
     )
     op.create_index('creation_date_idx', 'feeds', ['creation_date'], unique=False, schema='content')
     # ### end Alembic commands ###
