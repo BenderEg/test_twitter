@@ -6,6 +6,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import ORJSONResponse
 from redis.asyncio import Redis
 
+from api import healtcheck
 from api.v1 import users, subscriptions, posts
 from background.regular import scheduler
 from core.config import settings
@@ -37,11 +38,10 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-
 app.include_router(users.router, prefix="/api/v1/users", tags=["Пользователи"])
 app.include_router(subscriptions.router, prefix="/api/v1/subscriptions", tags=["Подписки"])
 app.include_router(posts.router, prefix="/api/v1/posts", tags=["Посты"])
-
+app.include_router(healtcheck.router, tags=["Проверка состояния"])
 
 @app.exception_handler(BaseError)
 async def app_exception_handler(request: Request, exc: BaseError):

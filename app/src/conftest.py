@@ -4,6 +4,7 @@ import pytest_asyncio
 
 from aiohttp import ClientSession
 
+from core.config import settings
 from db.sqlalcem import async_session
 from tests.utils import delete_user
 
@@ -16,7 +17,7 @@ def make_get_request() -> tuple[dict, int]:
         query: dict | None = None,
         cookies: dict | None = None,
     ):
-        async with ClientSession(base_url="http://localhost:8000") as session:
+        async with ClientSession(base_url=settings.base_url) as session:
             async with session.get(sub_url,
                                         headers=headers,
                                         cookies=cookies,
@@ -36,7 +37,7 @@ def make_post_request():
         headers: dict | None = {"Content-type": "application/json"},
         cookies: dict | None = None,
     ) -> tuple[dict, int]:
-        async with ClientSession(base_url="http://localhost:8000") as session:
+        async with ClientSession(base_url=settings.base_url) as session:
             async with session.post(sub_url,
                                     headers=headers,
                                     cookies=cookies,

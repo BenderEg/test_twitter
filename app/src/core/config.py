@@ -33,5 +33,6 @@ class Settings(BaseSettings):
     twit_numbers: int
     max_twits: int
     feed_partitions: int
+    base_url: str
 
 settings = Settings()

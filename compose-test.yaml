@@ -7,9 +7,7 @@ services:
         env_file:
             - .env
         volumes:
-            #- twitter_postgres:/var/lib/postgresql/data
             - ./db:/docker-entrypoint-initdb.d/
-            - ./dump:/dump/
         networks:
             - twitter_net
         environment:
@@ -25,8 +23,6 @@ services:
     twitter-red:
         container_name: twitter-red
         image: redis
-        volumes:
-            - twitter-redis:/data
         networks:
             - twitter_net
         healthcheck:
@@ -54,11 +50,26 @@ services:
         restart: always
         entrypoint: ["bash", "entrypoint.sh"]
 
-volumes:
-    #twitter_postgres:
-    #    name: twitter_postgres
-    twitter-redis:
-        name: twitter-redis
+    test:
+        container_name: twitter-test
+        image: twitter-app
+        env_file:
+            - .env
+        networks:
+            - twitter_net
+        depends_on:
+            twitter-red:
+                condition: service_healthy
+            twitter-db:
+                condition: service_healthy
+            twitter-app:
+                condition: service_started
+        entrypoint: ['pytest', '-s', '-v', '--disable-warnings']
+        healthcheck:
+            test: curl --fail http://twitter-app:8000/health/ || exit 1
+            interval: 5s
+            timeout: 30s
+            retries: 5
 
 networks:
     twitter_net:
