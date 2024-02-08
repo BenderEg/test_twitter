@@ -11,6 +11,7 @@ from background.regular import scheduler
 from core.config import settings
 from db import red_conn
 from errors.base import BaseError
+from partition.partitioning import create_partioning_tables
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -21,6 +22,7 @@ async def lifespan(app: FastAPI):
                            decode_responses=True
                            )
     #scheduler.start()
+    await create_partioning_tables(settings.feed_partitions, "feeds")
     yield
     #scheduler.shutdown()
     await red_conn.redis.close()

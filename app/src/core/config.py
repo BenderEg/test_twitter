@@ -32,5 +32,6 @@ class Settings(BaseSettings):
     log_level: str
     twit_numbers: int
     max_twits: int
+    feed_partitions: int
 
 settings = Settings()
