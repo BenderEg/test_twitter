@@ -8,6 +8,6 @@ WORKDIR /app
 
 COPY ./src .
 
-RUN useradd -d /app -r -U sam && chown sam:sam -R /app
+RUN useradd -d /app -r -U admin && chown admin:admin -R /app
 
-USER sam
+USER admin

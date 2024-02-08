@@ -55,8 +55,8 @@ services:
         entrypoint: ["bash", "entrypoint.sh"]
 
 volumes:
-    #twitter_postgres:
-    #    name: twitter_postgres
+    twitter_postgres:
+        name: twitter_postgres
     twitter-redis:
         name: twitter-redis
 
