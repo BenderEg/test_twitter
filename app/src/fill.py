@@ -1,4 +1,3 @@
-from copy import copy
 from random import choices, randint
 from string import ascii_letters, ascii_uppercase, punctuation, digits
 from uuid import UUID, uuid4
@@ -26,19 +25,27 @@ async def create_users(users_id: list[UUID], session: AsyncSession) -> None:
     await session.commit()
 
 async def create_subscriptions(users_id: list[UUID], session: AsyncSession) -> None:
-    for ele in users_id:
-        ids_copy = copy(users_id)
-        ids_copy.remove(ele)
-        await session.execute(insert(Subscription).values([{"user_id": ele,
-                                                            "subscriber_id": value} for value in ids_copy]))
+    values = []
+    for i, ele in enumerate(users_id):
+        ids = users_id[0:i]
+        if i < len(users_id)-1:
+            ids += users_id[i+1:]
+        values.extend([{"user_id": ele,
+                        "subscriber_id": value} for value in choices(ids, k=100)])
+    step = 1000
+    for i in range(0, len(values), step):
+        await session.execute(insert(Subscription).values(values[i:i+step]))
     await session.commit()
 
 async def create_posts(users_id: list[UUID], session: AsyncSession) -> None:
+    values = []
     for ele in users_id:
-        await session.execute(insert(Post).values(
-            [{"user_id": ele,
-            "header": "".join(choices(SYMBOLS, k=randint(1, 140)))
-            } for _ in range(500)]))
+        values.extend([{"user_id": ele,
+            "header": "".join(choices(SYMBOLS, k=randint(1, 100)))
+            } for _ in range(500)])
+    step = 1000
+    for i in range(0, len(values), step):
+        await session.execute(insert(Post).values(values[i: i+step]))
     await session.commit()
 
 async def create_feeds(users_id: list[UUID], session: AsyncSession) -> None:
@@ -63,15 +70,11 @@ async def create_feeds(users_id: list[UUID], session: AsyncSession) -> None:
 async def create_data(number: int) -> None:
     users_id = generate_users_id(number)
     async with async_session() as session:
-        for i in range(0, len(users_id), 100):
-            await create_users(users_id[i: i+100], session)
-        for i in range(0, len(users_id), 100):
-            await create_subscriptions(users_id[i: i+100], session)
-        for i in range(0, len(users_id), 100):
-            await create_posts(users_id[i: i+100], session)
-        for i in range(0, len(users_id), 100):
-            await create_feeds(users_id[i: i+100], session)
+        await create_users(users_id, session)
+        await create_subscriptions(users_id, session)
+        await create_posts(users_id, session)
+        await create_feeds(users_id, session)
 
 
 if __name__ == "__main__":
-    asyncio.run(create_data(100))
+    asyncio.run(create_data(10))
