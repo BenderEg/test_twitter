@@ -13,7 +13,7 @@ class SelfSubscription(BaseError):
 
 class SubscriptionAlreadyExist(BaseError):
     status_code = HTTPStatus.BAD_REQUEST
-    detail = {"message": "Subscription already exists"}
+    detail = {"message": "Error in subscription creation"}
 
 
 class SubscriptionNotFound(BaseError):
@@ -23,7 +23,7 @@ class SubscriptionNotFound(BaseError):
 
 class PostWrongUser(BaseError):
     status_code = HTTPStatus.BAD_REQUEST
-    detail = {"message": "Unexisting user tried to create post"}
+    detail = {"message": "Error in post creation"}
 
 
 class PostNotFound(BaseError):

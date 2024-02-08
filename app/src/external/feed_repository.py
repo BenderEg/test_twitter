@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import Iterable
 from uuid import UUID
 
 from fastapi import Depends
@@ -10,7 +9,7 @@ from db.sqlalcem import get_session
 from db.schemas import Feed
 from external.posts_repository import PostRepository
 from external.subscriptions_repository import SubscriptionRepository
-from external.user_repository import UserRepository
+
 
 class FeedRepository:
     def __init__(self, session: AsyncSession) -> None:
@@ -112,6 +111,7 @@ WHERE id IN (
                                max_twits=max_twits)
         await self.session.execute(stmt)
         await self.session.commit()
+
 
 def get_feed_repository(session: AsyncSession = Depends(get_session)) -> FeedRepository:
     return FeedRepository(session=session)
