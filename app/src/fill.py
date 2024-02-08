@@ -1,4 +1,5 @@
-from random import choices, randint
+from datetime import datetime
+from random import choices, randint, shuffle
 from string import ascii_letters, ascii_uppercase, punctuation, digits
 from uuid import UUID, uuid4
 
@@ -27,11 +28,12 @@ async def create_users(users_id: list[UUID], session: AsyncSession) -> None:
 async def create_subscriptions(users_id: list[UUID], session: AsyncSession) -> None:
     values = []
     for i, ele in enumerate(users_id):
-        ids = users_id[0:i]
+        ids = users_id[:i]
         if i < len(users_id)-1:
             ids += users_id[i+1:]
+        shuffle(ids)
         values.extend([{"user_id": ele,
-                        "subscriber_id": value} for value in choices(ids, k=100)])
+                        "subscriber_id": value} for value in ids[:100]])
     step = 1000
     for i in range(0, len(values), step):
         await session.execute(insert(Subscription).values(values[i:i+step]))
@@ -68,13 +70,16 @@ async def create_feeds(users_id: list[UUID], session: AsyncSession) -> None:
 
 
 async def create_data(number: int) -> None:
+    start = datetime.utcnow()
     users_id = generate_users_id(number)
     async with async_session() as session:
         await create_users(users_id, session)
         await create_subscriptions(users_id, session)
         await create_posts(users_id, session)
         await create_feeds(users_id, session)
-
+    end = datetime.utcnow()
+    duration = (end-start).seconds
+    print(duration)
 
 if __name__ == "__main__":
-    asyncio.run(create_data(10))
+    asyncio.run(create_data(100))
