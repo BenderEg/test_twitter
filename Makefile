@@ -22,4 +22,7 @@ down-test:
 	$(dctest) down
 
 data-load:
-	$(d) exec -it twitter-db pg_restore -U admin -d twitter --data-only dump/my_database.dump
+	$(d) exec -it twitter-db pg_restore -U admin -d twitter --data-only -t users dump/test_data.dump
+	$(d) exec -it twitter-db pg_restore -U admin -d twitter --data-only -t posts dump/test_data.dump
+	$(d) exec -it twitter-db pg_restore -U admin -d twitter --data-only -t subscriptions dump/test_data.dump
+	$(d) exec -it twitter-db pg_restore -U admin -d twitter --data-only -t feeds dump/test_data.dump
