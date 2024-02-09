@@ -1,3 +1,5 @@
+ссылка на github: https://github.com/BenderEg/test_twitter
+
 Перед запуском необходимо создать файл .env по примеру env_example.md
 
 # Запуск и остановка
@@ -12,3 +14,5 @@
 1. `make test` - запусить все необходимые компоненты без volume + контейнер с тестами
 2. `make test-result` - просмотр результатов тестов
 3. `make down-test` - удаление контейнеров
+
+Ссылка для swagger: http://127.0.0.1:8000/api/openapi
